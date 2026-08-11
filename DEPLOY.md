@@ -303,6 +303,7 @@ Confirm the whole path works end to end, not just the login:
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | Service won't start, log mentions parsing `BACKEND_CORS_ORIGINS` | Not a JSON array | Use `["https://your-app.vercel.app"]`, brackets and quotes included |
+| Same error, and the variable was left empty | An empty string is not valid JSON | Never leave it blank — use the placeholder until step 4. Deleting the variable outright is also safe (it falls back to localhost defaults); submitting it empty is not |
 | Browser console: "blocked by CORS policy" | Origin missing from the allow-list | Check step 4; match the URL exactly, including `https://` and no trailing slash |
 | Every API call 404s, paths show `/api/v1/api/v1/...` | `VITE_API_URL` includes `/api/v1` | Set the origin only, then **redeploy** Vercel |
 | Frontend build fails on Vercel | Root Directory not set to `frontend` | Set it in Project Settings, redeploy |
