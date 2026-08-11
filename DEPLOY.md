@@ -118,10 +118,21 @@ that until step 3. You will use a placeholder now and correct it in step 4.
 1. In the Render dashboard choose **New → Blueprint**.
 2. Connect your GitHub account and select `woenv-dashboard`.
 3. Render finds [`render.yaml`](render.yaml) in the repository root and reads
-   the whole service definition from it — instance type, Docker build settings,
-   health check and which variables it needs. You do not configure those by
-   hand.
-4. Set the region to **Frankfurt**, matching the Neon region from step 1.
+   the whole service definition from it — region, instance type, Docker build
+   settings, health check and which variables it needs. You do not configure
+   those by hand.
+
+The region is already set to `frankfurt` in that file, matching the Neon region
+from step 1, so there is nothing to choose here.
+
+> Render names its regions Oregon, Ohio, Virginia, Frankfurt and Singapore — it
+> does not use AWS region codes, so you will not see `eu-central-1` anywhere in
+> Render's interface. Neon's `AWS eu-central-1` and Render's `frankfurt` are the
+> same city; that is the point of picking both.
+
+> **Like Neon, this is permanent.** Render cannot move an existing service to
+> another region. If you need somewhere other than Frankfurt, edit `region:` in
+> `render.yaml` and push *before* creating the service.
 
 ### 2b. Fill in the values Render asks for
 

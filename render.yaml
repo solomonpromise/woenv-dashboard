@@ -9,7 +9,11 @@ services:
     name: woenv-api
     runtime: docker
     plan: free
-    region: oregon
+    # Must match the Neon project's region - the backend/database round trip is
+    # the latency that matters, since ingestion issues many queries per request.
+    # Render cannot move an existing service, so changing this later means
+    # recreating it. Valid values: oregon, ohio, virginia, frankfurt, singapore.
+    region: frankfurt
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /health
@@ -22,7 +26,7 @@ services:
 
       # sync: false means "prompt me, don't store it in git".
       # Neon connection string, e.g.
-      #   postgresql://user:pass@ep-xxx.us-west-2.aws.neon.tech/woenv?sslmode=require
+      #   postgresql://user:pass@ep-xxx.eu-central-1.aws.neon.tech/woenv?sslmode=require
       - key: DATABASE_URL
         sync: false
 
