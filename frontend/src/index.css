@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /*
+   * One palette expressed as RGB triples, swapped wholesale for dark mode.
+   * Components reference the semantic names (surface / edge / content) so a
+   * theme change never requires touching a component.
+   */
+  :root {
+    --surface: 255 255 255;
+    --surface-raised: 255 255 255;
+    --surface-sunken: 244 246 249;
+    --edge: 226 232 240;
+    --edge-strong: 203 213 225;
+    --content: 15 23 42;
+    --content-muted: 71 85 105;
+    --content-subtle: 129 140 155;
+    --chart-grid: 226 232 240;
+  }
+
+  .dark {
+    --surface: 17 24 39;
+    --surface-raised: 24 32 47;
+    --surface-sunken: 12 17 28;
+    --edge: 39 50 68;
+    --edge-strong: 56 70 92;
+    --content: 241 245 249;
+    --content-muted: 163 176 194;
+    --content-subtle: 122 136 156;
+    --chart-grid: 39 50 68;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface-sunken text-content antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /* Tabular figures keep rate and pressure columns aligned. */
+  .numeric {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    @apply bg-primary-500/25;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary-500/60 ring-offset-2 ring-offset-surface;
+  }
+
+  /* Scrollbars that do not fight the dark theme. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--edge-strong)) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-edge-strong;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-edge bg-surface-raised shadow-card;
+  }
+
+  .card-pad {
+    @apply p-5;
+  }
+
+  .card-header {
+    @apply flex items-start justify-between gap-4 border-b border-edge px-5 py-4;
+  }
+
+  .card-title {
+    @apply text-sm font-semibold tracking-tight text-content;
+  }
+
+  .card-subtitle {
+    @apply mt-0.5 text-xs text-content-subtle;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2
+           text-sm font-medium transition-colors duration-150
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800;
+  }
+
+  .btn-secondary {
+    @apply btn border border-edge bg-surface-raised text-content
+           hover:bg-surface-sunken active:bg-surface-sunken;
+  }
+
+  .btn-ghost {
+    @apply btn text-content-muted hover:bg-surface-sunken hover:text-content;
+  }
+
+  .btn-danger {
+    @apply btn bg-breach text-white hover:brightness-110;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-edge bg-surface px-3 py-2 text-sm
+           text-content placeholder:text-content-subtle
+           focus:border-primary-500 focus:outline-none focus:ring-2
+           focus:ring-primary-500/25 disabled:cursor-not-allowed
+           disabled:bg-surface-sunken disabled:text-content-subtle;
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wide text-content-muted;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5
+           text-2xs font-medium ring-1 ring-inset;
+  }
+
+  .table-wrap {
+    @apply overflow-x-auto;
+  }
+
+  .table {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .table thead th {
+    @apply sticky top-0 z-10 whitespace-nowrap border-b border-edge
+           bg-surface-sunken px-4 py-2.5 text-left text-2xs font-semibold
+           uppercase tracking-wider text-content-muted;
+  }
+
+  .table tbody td {
+    @apply whitespace-nowrap border-b border-edge/60 px-4 py-2.5 text-content;
+  }
+
+  .table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .table tbody tr {
+    @apply transition-colors hover:bg-surface-sunken/60;
+  }
+
+  .skeleton {
+    @apply animate-shimmer rounded-md bg-edge;
+  }
+}

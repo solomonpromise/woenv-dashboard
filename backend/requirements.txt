@@ -1,0 +1,21 @@
+fastapi==0.109.2
+uvicorn[standard]==0.27.1
+sqlalchemy==2.0.27
+psycopg2-binary==2.9.9
+alembic==1.13.1
+pydantic-settings==2.1.0
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+# Pinned explicitly: the [bcrypt] extra is unversioned, so a fresh install
+# resolves to bcrypt 5.x. passlib 1.7.4 reads bcrypt.__about__.__version__ for
+# backend detection, which 4.1+ removed, and its probe then dies on a >72-byte
+# test secret that new bcrypt refuses to truncate. Every hash and every login
+# raises ValueError. passlib 1.7.4 is the current release, so pinning bcrypt is
+# the fix rather than upgrading passlib.
+bcrypt==4.0.1
+python-multipart==0.0.9
+redis==5.0.1
+celery==5.3.6
+pandas==2.2.0
+openpyxl==3.1.2
+numpy==1.26.4

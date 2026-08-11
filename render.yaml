@@ -1,0 +1,47 @@
+# Render blueprint for the WOEnv API.
+#
+# The database is NOT declared here on purpose: Render's own free PostgreSQL is
+# deleted after 30 days. Provision Neon (or Supabase) separately and paste its
+# connection string into DATABASE_URL. See DEPLOY.md.
+
+services:
+  - type: web
+    name: woenv-api
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /health
+    envVars:
+      # Generated once by Render and kept across deploys. Tokens signed with it
+      # stay valid; letting the app fall back to a per-process key would log
+      # every user out on each restart.
+      - key: SECRET_KEY
+        generateValue: true
+
+      # sync: false means "prompt me, don't store it in git".
+      # Neon connection string, e.g.
+      #   postgresql://user:pass@ep-xxx.us-west-2.aws.neon.tech/woenv?sslmode=require
+      - key: DATABASE_URL
+        sync: false
+
+      # JSON array - pydantic-settings parses List[str] as JSON, so a bare
+      # comma-separated string fails to load at boot.
+      #   ["https://your-app.vercel.app"]
+      - key: BACKEND_CORS_ORIGINS
+        sync: false
+
+      # Set for the first deploy to create the admin user, then delete it -
+      # the free plan has no shell to run scripts.seed_admin by hand.
+      - key: ADMIN_PASSWORD
+        sync: false
+
+      # The free plan has no persistent disk, so this is scratch space that is
+      # wiped on restart. Parsed data lives in Postgres; only
+      # scripts.reingest_uploads needs the original workbooks.
+      - key: UPLOAD_DIR
+        value: /app/uploads
+
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "480"

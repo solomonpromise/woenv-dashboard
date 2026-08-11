@@ -1,0 +1,37 @@
+# Secrets - never commit. Use .env.example as the template.
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Uploaded workbooks may contain commercially sensitive well data.
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+.eslintcache
+
+# Editors / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Excel lock files
+~$*
+*.log

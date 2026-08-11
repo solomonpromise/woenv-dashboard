@@ -1,0 +1,69 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: woenv-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-woenv_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-woenv_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-woenv_db}
+    ports:
+      # Host port is configurable so this does not collide with a local
+      # PostgreSQL already bound to 5432.
+      - "${DB_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-woenv_user} -d ${POSTGRES_DB:-woenv_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    container_name: woenv-backend
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-woenv_user}:${POSTGRES_PASSWORD:-woenv_pass}@db:5432/${POSTGRES_DB:-woenv_db}
+      # No default: the stack refuses to start without an explicit secret
+      # rather than silently signing tokens with a well-known placeholder.
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env before starting}
+      UPLOAD_DIR: /app/uploads
+      BACKEND_CORS_ORIGINS: '["http://localhost:3000","http://localhost:5173"]'
+      # Optional. When set, the entrypoint creates the admin user on first boot,
+      # which is the same path the Render deployment uses.
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - upload_data:/app/uploads
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      # Empty: nginx proxies /api to the backend, so the browser stays
+      # same-origin. Setting an origin here without /api/v1 is what made every
+      # request 404 previously.
+      args:
+        VITE_API_URL: ""
+    container_name: woenv-frontend
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+# Redis and the Celery worker were removed on 2026-08-11. Nothing in the
+# application ever enqueued a task - app/api/upload.py ingests workbooks
+# synchronously inside the request - so the worker sat idle and Redis existed
+# only to broker for it. app/tasks/ is still present if background processing
+# is wired up later; restoring it means re-adding a redis service, a celery
+# service running `celery -A app.tasks.celery_app worker`, and REDIS_URL on
+# both it and the backend.
+
+volumes:
+  postgres_data:
+  upload_data:

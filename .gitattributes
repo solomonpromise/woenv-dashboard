@@ -1,0 +1,5 @@
+# start.sh runs inside a Linux container. Without this it is checked out on
+# Windows with CRLF endings and the shebang fails with a "^M: bad interpreter"
+# error that gives no hint about what is wrong.
+*.sh text eol=lf
+Dockerfile text eol=lf
