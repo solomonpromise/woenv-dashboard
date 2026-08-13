@@ -51,21 +51,47 @@ export default {
         '2xs': ['0.6875rem', { lineHeight: '1rem' }],
       },
       boxShadow: {
-        card: '0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.06)',
-        raised: '0 4px 12px -2px rgb(0 0 0 / 0.10), 0 2px 6px -2px rgb(0 0 0 / 0.06)',
+        /*
+         * Elevation is tinted with the theme's shadow hue rather than pure
+         * black. Neutral black over a blue-tinted surface reads as grime; a
+         * hue-matched shadow reads as depth. Each level stacks a tight contact
+         * shadow with a wider ambient one.
+         */
+        card: '0 1px 2px -1px hsl(var(--shadow-hue) / 0.10), 0 2px 6px -2px hsl(var(--shadow-hue) / 0.08)',
+        raised:
+          '0 2px 4px -2px hsl(var(--shadow-hue) / 0.12), 0 8px 20px -6px hsl(var(--shadow-hue) / 0.16)',
+        floating:
+          '0 4px 8px -4px hsl(var(--shadow-hue) / 0.16), 0 20px 40px -12px hsl(var(--shadow-hue) / 0.24)',
+        inset: 'inset 0 1px 2px 0 hsl(var(--shadow-hue) / 0.06)',
+        // Coloured shadows so a primary action looks lit rather than painted.
+        'btn-primary': '0 1px 2px 0 rgb(29 78 216 / 0.30), 0 6px 16px -6px rgb(37 99 235 / 0.55)',
+        'btn-primary-hover':
+          '0 2px 4px 0 rgb(29 78 216 / 0.32), 0 10px 24px -6px rgb(37 99 235 / 0.65)',
+        'btn-danger': '0 1px 2px 0 rgb(185 28 28 / 0.30), 0 6px 16px -6px rgb(239 68 68 / 0.50)',
       },
       animation: {
         'fade-in': 'fadeIn 0.2s ease-out',
+        'rise-in': 'riseIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both',
         shimmer: 'shimmer 1.6s ease-in-out infinite',
+        'pulse-ring': 'pulseRing 2.4s ease-out infinite',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0', transform: 'translateY(4px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        riseIn: {
+          '0%': { opacity: '0', transform: 'translateY(14px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
         shimmer: {
           '0%, 100%': { opacity: '0.45' },
           '50%': { opacity: '0.85' },
+        },
+        // Radiating ring on the breaching well marker in the hero diagram.
+        pulseRing: {
+          '0%': { transform: 'scale(0.8)', opacity: '0.7' },
+          '70%, 100%': { transform: 'scale(2.2)', opacity: '0' },
         },
       },
     },

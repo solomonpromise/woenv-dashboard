@@ -162,7 +162,7 @@ function WellRow({ well, fieldCode }: { well: Well; fieldCode?: string }) {
     <tr>
       <td>
         <Link
-          to={`/wells/${well.id}`}
+          to={`/dashboard/wells/${well.id}`}
           className="font-medium text-content hover:text-primary-600"
         >
           {well.name}
@@ -177,7 +177,7 @@ function WellRow({ well, fieldCode }: { well: Well; fieldCode?: string }) {
       <td className="text-content-muted">{well.bean_model ?? '—'}</td>
       <td className="text-right">
         <Link
-          to={`/wells/${well.id}`}
+          to={`/dashboard/wells/${well.id}`}
           className="inline-flex text-content-subtle hover:text-primary-600"
           aria-label={`Open ${well.name}`}
         >

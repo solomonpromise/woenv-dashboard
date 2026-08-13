@@ -7,29 +7,38 @@
    * One palette expressed as RGB triples, swapped wholesale for dark mode.
    * Components reference the semantic names (surface / edge / content) so a
    * theme change never requires touching a component.
+   *
+   * The surfaces carry a slight blue tint rather than sitting on neutral grey.
+   * Pure white on pure grey reads as unfinished on a data-dense screen, and the
+   * tint gives the cards something to lift away from.
    */
   :root {
     --surface: 255 255 255;
     --surface-raised: 255 255 255;
-    --surface-sunken: 244 246 249;
-    --edge: 226 232 240;
-    --edge-strong: 203 213 225;
-    --content: 15 23 42;
-    --content-muted: 71 85 105;
-    --content-subtle: 129 140 155;
-    --chart-grid: 226 232 240;
+    --surface-sunken: 239 243 249;
+    --edge: 223 230 241;
+    --edge-strong: 197 208 224;
+    --content: 13 21 40;
+    --content-muted: 66 80 104;
+    --content-subtle: 116 129 150;
+    --chart-grid: 223 230 241;
+    /* Drives the tinted elevation shadows below. */
+    --shadow-hue: 215 25% 27%;
+    --accent: 16 185 129;
   }
 
   .dark {
-    --surface: 17 24 39;
-    --surface-raised: 24 32 47;
-    --surface-sunken: 12 17 28;
-    --edge: 39 50 68;
-    --edge-strong: 56 70 92;
-    --content: 241 245 249;
-    --content-muted: 163 176 194;
-    --content-subtle: 122 136 156;
-    --chart-grid: 39 50 68;
+    --surface: 16 22 36;
+    --surface-raised: 22 30 46;
+    --surface-sunken: 10 14 24;
+    --edge: 37 48 67;
+    --edge-strong: 57 72 96;
+    --content: 237 242 249;
+    --content-muted: 159 173 193;
+    --content-subtle: 119 133 155;
+    --chart-grid: 37 48 67;
+    --shadow-hue: 220 60% 3%;
+    --accent: 52 211 153;
   }
 
   html {
@@ -39,6 +48,17 @@
   body {
     @apply bg-surface-sunken text-content antialiased;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+
+  /*
+   * Browsers centre <th> by default. Setting it here rather than on
+   * `.table thead th` keeps the specificity at a single element selector, so a
+   * `text-right` utility on an individual header still wins - it did not when
+   * this lived in the component rule, and every numeric column header in the
+   * app was silently left-aligned above right-aligned figures.
+   */
+  th {
+    text-align: left;
   }
 
   /* Tabular figures keep rate and pressure columns aligned. */
@@ -74,8 +94,34 @@
 }
 
 @layer components {
+  /* ---------------------------------------------------------------------- */
+  /* Surfaces                                                               */
+  /* ---------------------------------------------------------------------- */
+
+  /*
+   * Cards sit on a faint top-down gradient and a hairline inner highlight, so
+   * they read as lit from above rather than as flat rectangles with a border.
+   */
   .card {
-    @apply rounded-xl border border-edge bg-surface-raised shadow-card;
+    @apply relative rounded-xl border border-edge bg-surface-raised shadow-card;
+    background-image: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.6) 0%,
+      rgb(255 255 255 / 0) 45%
+    );
+  }
+
+  .dark .card {
+    background-image: linear-gradient(
+      180deg,
+      rgb(255 255 255 / 0.045) 0%,
+      rgb(255 255 255 / 0) 45%
+    );
+  }
+
+  /* Opt-in lift for cards that are themselves links or buttons. */
+  .card-interactive {
+    @apply transition-all duration-200 hover:-translate-y-0.5 hover:border-edge-strong hover:shadow-raised;
   }
 
   .card-pad {
@@ -94,19 +140,32 @@
     @apply mt-0.5 text-xs text-content-subtle;
   }
 
+  /* ---------------------------------------------------------------------- */
+  /* Buttons                                                                */
+  /* ---------------------------------------------------------------------- */
+
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2
-           text-sm font-medium transition-colors duration-150
-           disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex select-none items-center justify-center gap-2 rounded-lg px-3.5 py-2
+           text-sm font-medium transition-all duration-150
+           active:translate-y-px
+           disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50;
   }
 
+  /*
+   * The primary action carries a gradient and a coloured shadow so it reads as
+   * the one lit element on the screen. A flat fill disappeared against the
+   * cards once they gained elevation of their own.
+   */
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800;
+    @apply btn text-white shadow-btn-primary
+           hover:brightness-[1.08] hover:shadow-btn-primary-hover
+           active:brightness-95;
+    background-image: linear-gradient(135deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
   }
 
   .btn-secondary {
-    @apply btn border border-edge bg-surface-raised text-content
-           hover:bg-surface-sunken active:bg-surface-sunken;
+    @apply btn border border-edge bg-surface-raised text-content shadow-card
+           hover:border-edge-strong hover:bg-surface-sunken;
   }
 
   .btn-ghost {
@@ -114,14 +173,21 @@
   }
 
   .btn-danger {
-    @apply btn bg-breach text-white hover:brightness-110;
+    @apply btn text-white shadow-btn-danger hover:brightness-110;
+    background-image: linear-gradient(135deg, #f05252 0%, #ef4444 55%, #dc2626 100%);
   }
+
+  /* ---------------------------------------------------------------------- */
+  /* Forms                                                                  */
+  /* ---------------------------------------------------------------------- */
 
   .input {
     @apply w-full rounded-lg border border-edge bg-surface px-3 py-2 text-sm
-           text-content placeholder:text-content-subtle
-           focus:border-primary-500 focus:outline-none focus:ring-2
-           focus:ring-primary-500/25 disabled:cursor-not-allowed
+           text-content shadow-inset transition-all duration-150
+           placeholder:text-content-subtle
+           hover:border-edge-strong
+           focus:border-primary-500 focus:outline-none focus:ring-4
+           focus:ring-primary-500/15 disabled:cursor-not-allowed
            disabled:bg-surface-sunken disabled:text-content-subtle;
   }
 
@@ -134,6 +200,10 @@
            text-2xs font-medium ring-1 ring-inset;
   }
 
+  /* ---------------------------------------------------------------------- */
+  /* Tables                                                                 */
+  /* ---------------------------------------------------------------------- */
+
   .table-wrap {
     @apply overflow-x-auto;
   }
@@ -142,9 +212,10 @@
     @apply w-full border-collapse text-sm;
   }
 
+  /* No text-align here - see the `th` base rule above. */
   .table thead th {
     @apply sticky top-0 z-10 whitespace-nowrap border-b border-edge
-           bg-surface-sunken px-4 py-2.5 text-left text-2xs font-semibold
+           bg-surface-sunken px-4 py-2.5 text-2xs font-semibold
            uppercase tracking-wider text-content-muted;
   }
 
@@ -157,10 +228,71 @@
   }
 
   .table tbody tr {
-    @apply transition-colors hover:bg-surface-sunken/60;
+    @apply transition-colors hover:bg-primary-500/[0.04];
   }
 
   .skeleton {
     @apply animate-shimmer rounded-md bg-edge;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Decorative                                                             */
+  /* ---------------------------------------------------------------------- */
+
+  /*
+   * The ambient wash used behind the landing hero and the sign-in screen. Two
+   * soft colour pools - primary and accent - over the sunken surface.
+   */
+  .aurora::before {
+    content: '';
+    @apply pointer-events-none absolute inset-0;
+    background-image: radial-gradient(
+        ellipse 80% 55% at 12% 8%,
+        rgb(37 99 235 / 0.20),
+        transparent 60%
+      ),
+      radial-gradient(ellipse 70% 55% at 88% 82%, rgb(16 185 129 / 0.18), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 60% 30%, rgb(99 102 241 / 0.10), transparent 60%);
+  }
+
+  .dark .aurora::before {
+    background-image: radial-gradient(
+        ellipse 80% 55% at 12% 8%,
+        rgb(37 99 235 / 0.26),
+        transparent 60%
+      ),
+      radial-gradient(ellipse 70% 55% at 88% 82%, rgb(16 185 129 / 0.20), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 60% 30%, rgb(99 102 241 / 0.14), transparent 60%);
+  }
+
+  /* A faint engineering grid, used behind hero areas. */
+  .grid-lines::after {
+    content: '';
+    @apply pointer-events-none absolute inset-0;
+    background-image: linear-gradient(rgb(var(--edge) / 0.55) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--edge) / 0.55) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 20%, transparent 75%);
+  }
+
+  /* Gradient text for the one headline that carries the page. */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--content)) 0%,
+      rgb(var(--content)) 45%,
+      #2563eb 100%
+    );
+  }
+
+  .dark .text-gradient {
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--content)) 0%,
+      rgb(var(--content)) 45%,
+      #60a5fa 100%
+    );
   }
 }

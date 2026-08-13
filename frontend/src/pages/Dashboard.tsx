@@ -143,7 +143,7 @@ export default function Dashboard() {
                 title="Fields"
                 subtitle="Production summed over each well's most recent test"
                 actions={
-                  <Link to="/fields" className="btn-ghost text-xs">
+                  <Link to="/dashboard/fields" className="btn-ghost text-xs">
                     View all <ArrowUpRight size={14} />
                   </Link>
                 }
@@ -240,7 +240,7 @@ function AlertRow({ alert }: { alert: EnvelopeAlert }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <Link
-            to={`/wells/${alert.well_id}`}
+            to={`/dashboard/wells/${alert.well_id}`}
             className="text-sm font-medium text-content hover:text-primary-600"
           >
             {alert.well_name}
