@@ -5,7 +5,7 @@ import { useAuthStore } from './stores/authStore'
 import Layout from './components/Layout'
 import Landing from './pages/Landing'
 import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
+import Overview from './pages/Overview'
 import FieldsPage from './pages/Fields'
 import WellsPage from './pages/Wells'
 import WellDetailPage from './pages/WellDetail'
@@ -67,7 +67,7 @@ export default function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<Dashboard />} />
+            <Route index element={<Overview />} />
             <Route path="fields" element={<FieldsPage />} />
             <Route path="wells" element={<WellsPage />} />
             <Route path="wells/:wellId" element={<WellDetailPage />} />

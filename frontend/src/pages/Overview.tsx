@@ -30,7 +30,7 @@ const ALERT_LABELS: Record<string, string> = {
   sub_critical_flow: 'Sub-critical flow',
 }
 
-export default function Dashboard() {
+export default function Overview() {
   const [fieldId, setFieldId] = useState<number | null>(null)
 
   const fields = useQuery({
@@ -59,7 +59,7 @@ export default function Dashboard() {
     <div className="space-y-5">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-content">Dashboard</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-content">Overview</h1>
           <p className="mt-0.5 text-sm text-content-muted">
             Fleet-wide production and operating-envelope status
           </p>
