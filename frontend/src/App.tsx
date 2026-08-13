@@ -1,8 +1,9 @@
 import { ReactNode } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAuthStore } from './stores/authStore'
 import Layout from './components/Layout'
+import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import FieldsPage from './pages/Fields'
@@ -38,9 +39,9 @@ function NotFound() {
         title="Page not found"
         description="That page does not exist."
         action={
-          <a href="/" className="btn-primary">
+          <Link to="/dashboard" className="btn-primary">
             Back to dashboard
-          </a>
+          </Link>
         }
       />
     </Card>
@@ -52,9 +53,14 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
+          {/* Public. The landing page is the entry point and stays reachable
+              from inside the dashboard, so it is not gated. */}
+          <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
+
+          {/* Everything below requires a session. */}
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Layout />
@@ -68,6 +74,11 @@ export default function App() {
             <Route path="upload" element={<UploadPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
+
+          {/* Anything else falls back to the landing page rather than a dead
+              end, since an unauthenticated visitor cannot see the dashboard's
+              own 404. */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

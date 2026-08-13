@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import {
   Activity,
+  Home,
   LayoutDashboard,
   LogOut,
   MapPin,
@@ -17,10 +18,10 @@ import { authApi } from '../services/api'
 import { Badge, cn } from './ui'
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard, end: true },
-  { name: 'Fields', href: '/fields', icon: MapPin },
-  { name: 'Wells', href: '/wells', icon: Activity },
-  { name: 'Upload Data', href: '/upload', icon: Upload },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, end: true },
+  { name: 'Fields', href: '/dashboard/fields', icon: MapPin },
+  { name: 'Wells', href: '/dashboard/wells', icon: Activity },
+  { name: 'Upload Data', href: '/dashboard/upload', icon: Upload },
 ]
 
 export default function Layout() {
@@ -58,13 +59,16 @@ export default function Layout() {
   const sidebar = (
     <>
       <div className="flex h-16 items-center gap-2.5 border-b border-edge px-5">
-        <div className="grid h-8 w-8 place-items-center rounded-lg bg-primary-600 text-sm font-bold text-white">
-          W
-        </div>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold tracking-tight text-content">WOEnv</p>
-          <p className="truncate text-2xs text-content-subtle">Operating Envelopes</p>
-        </div>
+        {/* The brand doubles as the way back out to the public landing page. */}
+        <Link to="/" className="flex min-w-0 items-center gap-2.5" title="Back to landing page">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary-600 text-sm font-bold text-white">
+            W
+          </div>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold tracking-tight text-content">WOEnv</p>
+            <p className="truncate text-2xs text-content-subtle">Operating Envelopes</p>
+          </div>
+        </Link>
         <button
           onClick={() => setMobileOpen(false)}
           className="ml-auto rounded-md p-1.5 text-content-muted hover:bg-surface-sunken lg:hidden"
@@ -153,11 +157,23 @@ export default function Layout() {
             <Menu size={18} />
           </button>
 
-          <Link to="/" className="text-sm font-semibold tracking-tight text-content lg:hidden">
+          <Link
+            to="/dashboard"
+            className="text-sm font-semibold tracking-tight text-content lg:hidden"
+          >
             WOEnv
           </Link>
 
           <div className="ml-auto flex items-center gap-1">
+            <Link
+              to="/"
+              className="rounded-md p-2 text-content-muted transition-colors hover:bg-surface-sunken hover:text-content"
+              title="Landing page"
+              aria-label="Go to the landing page"
+            >
+              <Home size={18} />
+            </Link>
+
             <button
               onClick={toggle}
               className="rounded-md p-2 text-content-muted transition-colors hover:bg-surface-sunken hover:text-content"

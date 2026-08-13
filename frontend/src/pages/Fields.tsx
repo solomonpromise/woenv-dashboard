@@ -41,7 +41,7 @@ export default function FieldsPage() {
             title="No fields yet"
             description="Upload a WOEnv workbook to create fields and wells."
             action={
-              <Link to="/upload" className="btn-primary">
+              <Link to="/dashboard/upload" className="btn-primary">
                 Upload data
               </Link>
             }
@@ -74,7 +74,7 @@ function FieldCard({ field }: { field: FieldStats }) {
           </p>
         </div>
         <Link
-          to={`/wells?field=${field.field_id}`}
+          to={`/dashboard/wells?field=${field.field_id}`}
           className="shrink-0 text-content-subtle transition-colors hover:text-primary-600"
           aria-label={`View wells in ${field.name}`}
         >

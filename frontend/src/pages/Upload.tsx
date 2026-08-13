@@ -262,7 +262,7 @@ function ResultPanel({ result, onReset }: { result: UploadResult; onReset: () =>
         <button onClick={onReset} className="btn-secondary">
           Upload another
         </button>
-        <Link to="/" className="btn-primary">
+        <Link to="/dashboard" className="btn-primary">
           View dashboard
         </Link>
       </div>

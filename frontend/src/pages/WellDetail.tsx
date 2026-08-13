@@ -69,7 +69,7 @@ export default function WellDetailPage() {
     <div className="space-y-5">
       <div>
         <Link
-          to="/wells"
+          to="/dashboard/wells"
           className="inline-flex items-center gap-1.5 text-xs text-content-muted hover:text-content"
         >
           <ArrowLeft size={14} />
